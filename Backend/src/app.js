@@ -8,19 +8,16 @@ const interviewRouter = require("./routes/interview.routes");
 
 const app = express();
 
-// CORS configuration
-const allowedOrigins = [
-    "http://localhost:5173",
-    "http://localhost:3000",
-    process.env.FRONTEND_URL
-].filter(Boolean);
+
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-    origin: allowedOrigins,
+    origin: "http://localhost:5173",
+    // origin: process.env.FRONTEND_URL,
     credentials: true
-}));
+}))
+
 
 /** using all the routes here */
 app.use("/api/auth", authRouter);
