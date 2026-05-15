@@ -64,6 +64,8 @@ export const useAuth = () => {
                 const data = await getMe()
                 if(data?.user) {
                     setUser(data.user)
+                } else {
+                    setUser(null)
                 }
             } catch (error) {
                 console.error('Failed to fetch user:', error);

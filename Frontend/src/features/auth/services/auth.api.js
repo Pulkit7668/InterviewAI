@@ -55,6 +55,11 @@ export async function getMe() {
         const response = await api.get('/api/auth/get-me')
         return response.data
     } catch (error) {
+        // Return empty user on 401 instead of throwing error
+        if (error.response?.status === 401) {
+            console.log('User not authenticated');
+            return { user: null }
+        }
         console.error('Get user error:', error);
         throw error;
     }
