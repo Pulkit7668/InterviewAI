@@ -4,6 +4,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    scroll-behavior: smooth;
 }
 
 html,
@@ -13,4 +14,6 @@ body,
     background-color: #1a1a1a;
     color: whitesmoke;
     font-family: system-ui;
+    overflow-x: hidden;
+    overflow-y: auto;
 }

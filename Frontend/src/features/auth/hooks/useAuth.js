@@ -1,4 +1,5 @@
 import { useContext, useEffect } from "react";
+import toast from "react-hot-toast";
 import { AuthContext } from "../auth.context";
 import { login, register, logout, getMe} from "../services/auth.api";
 
@@ -14,10 +15,12 @@ export const useAuth = () => {
             const data = await login({email, password})
             setUser(data.user)
             setError(null)
+            toast.success('Signed in successfully')
         } catch (error) {
             console.error('Login failed:', error);
             const errMsg = error.response?.data?.message || 'Login failed'
             setError(errMsg)
+            toast.error(errMsg)
             throw error
         } finally {
             setLoading(false)
@@ -31,10 +34,12 @@ export const useAuth = () => {
             const data = await register({ username, email, password })
             setUser(data.user)
             setError(null)
+            toast.success('Account created successfully')
         } catch (error) {
             console.error('Register failed:', error);
             const errMsg = error.response?.data?.message || 'Registration failed'
             setError(errMsg)
+            toast.error(errMsg)
             throw error
         } finally {
             setLoading(false)
@@ -48,9 +53,12 @@ export const useAuth = () => {
             await logout()
             setUser(null)
             setError(null)
+            toast.success('Signed out successfully')
         } catch (error) {
             console.error('Logout failed:', error);
-            setError(error.response?.data?.message || 'Logout failed')
+            const errMsg = error.response?.data?.message || 'Logout failed'
+            setError(errMsg)
+            toast.error(errMsg)
             throw error
         } finally{
             setLoading(false)

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 import "../styles/navbar.scss";
 
 const Navbar = () => {
-  const { user, handleLogout, error } = useAuth();
+  const { user, handleLogout } = useAuth();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [logoutError, setLogoutError] = useState(null);
   const navigate = useNavigate();

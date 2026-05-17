@@ -1,12 +1,13 @@
 import { useAuth } from "../hooks/useAuth";
 import { Navigate } from "react-router";
 import Navbar from "./Navbar";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const Protected = ({children}) => {
     const { loading, user } = useAuth();
   
     if(loading) {
-      return <main><h1>Loading......</h1></main>
+      return <LoadingSpinner fullScreen message="Authenticating..." />
     }
 
     if(!user) {
@@ -21,4 +22,4 @@ const Protected = ({children}) => {
     )
 }
 
-export default Protected 
+export default Protected

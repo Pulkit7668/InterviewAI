@@ -2,26 +2,33 @@ import { useState, useRef } from 'react'
 import "../style/home.scss"
 import { useInterview } from "../hooks/useInterview"
 import { useNavigate } from "react-router"
+import LoadingSpinner from '../../../components/LoadingSpinner'
 
 const Home = () => {
 
   const { loading, generateReport, reports } = useInterview()
   const [jobDescription, setJobDescription] = useState("")
   const [selfDescription, setSelfDescription] = useState("")
+  const [generateLoading, setGenerateLoading] = useState(false)
   const resumeInputRef = useRef()
   const navigate = useNavigate()
 
   const handleGenerateReport = async () => {
     const resumeFile = resumeInputRef.current.files[0]
-    const data = await generateReport({ jobDescription, selfDescription, resumeFile })
-    navigate(`/interview/${data._id}`)
+    setGenerateLoading(true)
+    try {
+      const data = await generateReport({ jobDescription, selfDescription, resumeFile })
+      if (data) {
+        navigate(`/interview/${data._id}`)
+      }
+    } finally {
+      setGenerateLoading(false)
+    }
   }
 
   if(loading) {
     return (
-      <main className='loading-screen'>
-        <h1>Loading your interview plan...</h1>
-      </main>
+      <LoadingSpinner fullScreen message="Loading your interview plans..." />
     )
   }
 
@@ -43,6 +50,7 @@ const Home = () => {
             name="jobDescription"
             id="jobDescription"
             placeholder="Enter the job description here..."
+            disabled={generateLoading}
           />
         </div>
 
@@ -51,7 +59,14 @@ const Home = () => {
 
           <div className="input-group">
             <label htmlFor="resume">Resume — <small>Use Resume and self description for best results (PDF Only)</small></label>
-            <input ref={resumeInputRef} type="file" name="resume" id="resume" accept=".pdf" />
+            <input 
+              ref={resumeInputRef} 
+              type="file" 
+              name="resume" 
+              id="resume" 
+              accept=".pdf"
+              disabled={generateLoading}
+            />
           </div>
 
           <div className="input-group" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
@@ -61,10 +76,24 @@ const Home = () => {
               name="selfDescription"
               id="selfDescription"
               placeholder="Briefly describe your background and skills..."
+              disabled={generateLoading}
             />
           </div>
 
-          <button onClick={handleGenerateReport} className='generate-btn'>Generate Interview Report →</button>
+          <button 
+            onClick={handleGenerateReport} 
+            className='generate-btn'
+            disabled={generateLoading}
+          >
+            {generateLoading ? (
+              <>
+                <div className="spinner-button" style={{marginRight: "0.8rem"}}></div>
+                Generating...
+              </>
+            ) : (
+              <>Generate Interview Report →</>
+            )}
+          </button>
         </div>
       </div>
 
@@ -74,7 +103,12 @@ const Home = () => {
           <h2>My Recent Interview Plans</h2>
           <ul className='report-list'>
             {reports.map(report => (
-              <li key={report._id} className='report-item' onClick={() => navigate(`/interview/${report._id}`)}>
+              <li 
+                key={report._id} 
+                className='report-item' 
+                onClick={() => navigate(`/interview/${report._id}`)}
+                style={{cursor: 'pointer'}}
+              >
                 <h3>{report.title || "Untitled Report"}</h3>
                 <p className='report-meta'>Generate on { new Date(report.createdAt).toLocaleDateString() }</p>
                 <p className={`match-score ${report.matchScore >= 80 ? 'score--high' : report.matchScore >= 60 ? 'score--mid' : 'score--low'}`}>Match Score: {report.matchScore}%</p>
